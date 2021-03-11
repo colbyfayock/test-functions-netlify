@@ -1,7 +1,22 @@
+import { useState, useEffect } from 'react';
 import Head from 'next/head'
+
+import { getHello } from '../lib/hello'
+
 import styles from '../styles/Home.module.css'
 
-export default function Home() {
+export default function Home({ hello }) {
+  const [msg, setMsg] = useState();
+
+  useEffect(() => {
+    async function run() {
+      const hello = await getHello();
+      setMsg(hello);
+    }
+    run();
+  }, [])
+
+  console.log('')
   return (
     <div className={styles.container}>
       <Head>
@@ -21,31 +36,13 @@ export default function Home() {
 
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
+            <h3>Server</h3>
+            <p>{ JSON.stringify(hello) }</p>
           </a>
 
           <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
+            <h3>Client</h3>
+            <p>{ JSON.stringify(msg) }</p>
           </a>
         </div>
       </main>
@@ -62,4 +59,12 @@ export default function Home() {
       </footer>
     </div>
   )
+}
+
+export async function getStaticProps() {
+  return {
+    props: {
+      hello: await getHello()
+    }
+  }
 }
